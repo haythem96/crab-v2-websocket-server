@@ -2,7 +2,7 @@ const express = require('express')
 import { createServer } from "http";
 import { Server } from "socket.io";
 import { initializeApp } from 'firebase/app'
-import { getFirestore, collection, query, onSnapshot, where } from "firebase/firestore";
+import { getFirestore, collection, query, onSnapshot, where, doc } from "firebase/firestore";
 
 const expressApp = express();
 const httpServer = createServer(expressApp);
@@ -35,14 +35,25 @@ const db = getFirestore(app)
 io.on("connection", (socket) => {
   console.log("connection");
 
-  onSnapshot(query(collection(db, 'auction'), where('clearingPrice', '==', '0')), (col) => {
-    console.log("docChanges: ", col.docChanges());
-    col.docChanges().forEach((docChange) => {
-        // console.log("doc: ", docChange.doc)
-        console.log("doc.data: ", docChange.doc.data())
-        socket.emit("current_auction", docChange.doc.data())
-    });
+  onSnapshot(doc(db, 'auction', 'current'), (doc) => {
+    console.log("doc", doc.data())
   });
+
+  // onSnapshot(collection(db, 'auction'), (col) => {
+  //   const auctionsArray: any[] = [];
+  //   col.docChanges().forEach((docChange) => {
+  //       auctionsArray.push(docChange.doc.data())
+  //   });
+  //   socket.emit("all_auction", auctionsArray)
+  // });
+
+  // onSnapshot(query(collection(db, 'auction'), where('clearingPrice', '==', '0')), (col) => {
+  //     socket.emit("current_auction", (col.docChanges())[0].doc.data())
+  // });    
+
+  socket.on("disconnect", () => {
+    console.log("disconnected")
+  })
 });
 
 httpServer.listen(port, () => {
