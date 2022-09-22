@@ -9,8 +9,8 @@ const socket = io('ws://localhost:3001');
 socket.on("connect", () => {
     console.log(socket.id);
 });
-socket.on("all_auction", (auctions) => {
-    console.log("got all auctions")
+socket.on("all_auctions", (auctions) => {
+    console.log("got all past auctions", auctions.length)
 })
 socket.on("current_auction", (current_auction) => {
     console.log("current_auction", current_auction)
