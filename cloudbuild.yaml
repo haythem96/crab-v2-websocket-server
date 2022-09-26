@@ -1,0 +1,53 @@
+steps:
+  # the following env vars need to be configured in the cloud build trigger settings:
+  #API_KEY
+  #AUTH_DOMAIN
+  #PROJECT_ID
+  #STORAGE_BUCKET
+  #MESSAGING_SENDER_ID
+  #APP_ID
+  #MEASUREMENT_ID
+
+  # build the docker image with required env vars
+  - name: gcr.io/cloud-builders/docker
+    args:
+      [
+        'build',
+        '-t',
+        'gcr.io/$PROJECT_ID/${_SERVICE_NAME}:${SHORT_SHA}',
+        '--build-arg',
+        'API_KEY=${_API_KEY}',
+        '--build-arg',
+        'AUTH_DOMAIN=${_AUTH_DOMAIN}',
+        '--build-arg',
+        'PROJECT_ID=${_PROJECT_ID}',
+        '--build-arg',
+        'STORAGE_BUCKET=${_STORAGE_BUCKET}',
+        '--build-arg',
+        'MESSAGING_SENDER_ID=${_MESSAGING_SENDER_ID}',
+        '--build-arg',
+        'APP_ID=${_APP_ID}',
+        '--build-arg',
+        'MEASUREMENT_ID=${_MEASUREMENT_ID}',
+        '.',
+      ]
+
+  # push the image to store
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/${_SERVICE_NAME}:$SHORT_SHA']
+
+  # deploy the image to cloud run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      [
+        'run',
+        'deploy',
+        '${_SERVICE_NAME}',
+        '--image',
+        'gcr.io/$PROJECT_ID/${_SERVICE_NAME}:${SHORT_SHA}',
+        '--region',
+        'us-central1',
+        '--platform',
+        'managed',
+        '--allow-unauthenticated',
+      ]
