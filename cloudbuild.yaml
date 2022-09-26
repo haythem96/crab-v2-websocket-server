@@ -20,7 +20,7 @@ steps:
         '--build-arg',
         'AUTH_DOMAIN=${_AUTH_DOMAIN}',
         '--build-arg',
-        'PROJECT_ID=${_PROJECT_ID}',
+        'FIREBASE_PROJECT_ID=${_FIREBASE_PROJECT_ID}',
         '--build-arg',
         'STORAGE_BUCKET=${_STORAGE_BUCKET}',
         '--build-arg',
