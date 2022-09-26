@@ -13,26 +13,18 @@ const httpServer = createServer(expressApp);
 const io = new Server(httpServer, { /* options */ });
 const port = 3001
 
-const firebaseConfig =
-    Number(process.env.ETHEREUM_CHAIN_ID) === 3
-    ? {
-        apiKey: 'AIzaSyAmIfokxcpt9pah1g9phk_rsXJkGVKhiE0',
-        authDomain: 'crab-v2-testnet.firebaseapp.com',
-        projectId: 'crab-v2-testnet',
-        storageBucket: 'crab-v2-testnet.appspot.com',
-        messagingSenderId: '694791446319',
-        appId: '1:694791446319:web:6fc69622a67b9866e64bda',
-        measurementId: 'G-WTFZNVKRCM',
-      }
-    : {
-        apiKey: 'AIzaSyBiXQZR9st59josYl2d5Q7arPb1ZoXEAfw',
-        authDomain: 'crab-v2-mainnet.firebaseapp.com',
-        projectId: 'crab-v2-mainnet',
-        storageBucket: 'crab-v2-mainnet.appspot.com',
-        messagingSenderId: '1059693712092',
-        appId: '1:1059693712092:web:af420f0f65b1d87ac51a19',
-        measurementId: 'G-EWNE553DPB',
-      }
+const firebaseConfig = {
+  apiKey: process.env.API_KEY,
+  authDomain: process.env.AUTH_DOMAIN,
+  projectId: process.env.PROJECT_ID,
+  storageBucket: process.env.STORAGE_BUCKET,
+  messagingSenderId: process.env.MESSAGING_SENDER_ID,
+  appId: process.env.APP_ID,
+  measurementId: process.env.MEASUREMENT_ID,
+  customHeaders: {
+    "Authorization": "Bearer owner"
+  }
+}
 const app = initializeApp(firebaseConfig)
 const db = getFirestore(app)
 
